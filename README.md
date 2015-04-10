@@ -10,7 +10,7 @@ Posted in this [issue](https://github.com/darklow/django-suit/issues/138)
 
 Recursively copy the folder *rosetta* into your virtualenv site-packages, that’s all.
 
-    /bin/cp -uvr rosetta your/virtualenv/lib/python2.7/site-packages"
+    /bin/cp -uvr rosetta your/virtualenv/lib/python2.7/site-packages
 
 ## Usage
 
