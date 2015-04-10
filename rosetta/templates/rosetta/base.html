@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+//<!--
+    google.load("jquery", "1.3");
+    {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}google.load("language", "1");{% endif %}
+    {% include 'rosetta/js/rosetta.js' %}
+//-->
+</script>
+{% endblock %}
+
+{% block extrastyle %}
+<style type="text/css" media="screen">
+    td.translation, td.original { width:30%; }
+    td.original .plural-container { position:relative; }
+    td.original .context,td.original .message {display:block;}
+    td.original .context { margin-top: 2em; color: #bbb; font-size:90%; }
+    td.translation textarea{ width:98.5%; min-height:25px; margin:2px 0; }
+    .rtl td.translation textarea { direction: rtl;}
+    .plural span {display:block; margin:2px 0; position:absolute;}
+    td.location code,td.location a { font-size:95%; display:block; }
+    td.location code.hide { display:none;}
+    .submit-row {margin-bottom:0;}
+    li.nobubble,li.nobubble:hover { background-image:none;}
+    th.r, td.r {text-align: right;}
+    th.c, td.c {text-align: center;}
+    td.original code {font-size:90%; padding: 0 1px; }
+    tr.row2 td.original code {background-color:#FFB2A5; padding: 0 0.3em;}
+    tr.row1 td.original code {background-color:#FFB2A5;}
+    td.hint {color: #777;}
+    .checkall {cursor:pointer;}
+    ul.dropdown-menu a { text-decoration: none; }
+    .switch-lang { display: inline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="inner-center-column">
+    {% block main %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
