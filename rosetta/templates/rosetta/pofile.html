@@ -1,8 +1,7 @@
 {% extends "rosetta/base.html" %}
 {% load rosetta i18n %}
-{% load url from future %}
 
-{% block title %}{{block.super}} - {{rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
+{% block title %}{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME }} - {{ rosetta_i18n_lang_name }} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
 
 {% block breadcumbs %}
 <ul class="breadcrumb">
@@ -28,7 +27,7 @@
 {% endblock %}
 
 {% block main %}
-<!--<h1>{% blocktrans  %}Translate into {{rosetta_i18n_lang_name}}{% endblocktrans %}</h1>-->
+<!--<h1>{% blocktrans  %}Translate into {{ rosetta_i18n_lang_name }}{% endblocktrans %}</h1>-->
 
 <div class="toolbar-content clearfix">
 
@@ -45,7 +44,7 @@
 
     <div id="toolbar" class="pull-left">
     <form id="changelist-search" action="" method="post">{% rosetta_csrf_token %}
-        <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
+        <input type="text" size="40" name="query" value="{% if query %}{{ query }}{% endif %}" id="searchbar" tabindex="0" />
         <input type="submit" name="search" value="{% trans "Go" %}" class="btn" style="margin-bottom:9px;" />
     </form>
     </div>
@@ -82,27 +81,27 @@
         </thead>
         <tbody>
         {% for message in rosetta_messages %}
-        <tr class="{% cycle row1,row2 %}">
+        <tr class="{% cycle 'row1' 'row2' %}">
             {% if message.msgid_plural %}
             <td class="original plural">
                 <div class="plural-container">
-                <span class="part">{{message.msgid|format_message|linebreaksbr}}</span>
-                <span class="part">{{message.msgid_plural|format_message|linebreaksbr}}</span>
+                <span class="part">{{ message.msgid|format_message|linebreaksbr }}</span>
+                <span class="part">{{ message.msgid_plural|format_message|linebreaksbr }}</span>
                 </div>
 
                 {% if message.msgctxt %}
-                <span class="context">{% trans "Context hint" %}: {{message.msgctxt|safe}}</span>
+                <span class="context">{% trans "Context hint" %}: {{ message.msgctxt|safe }}</span>
                 {% else %}
                 {% if message.comment %}
-                <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
+                <span class="context">{% trans "Context hint" %}: {{ message.comment|safe }}</span>
                 {% endif %}
                 {% endif %}
 
             </td>
             <td class="translation">
                 {% for k, msgstr in message.msgstr_plural.items|dictsort:"0"  %}
-                <label for="m_{{message.md5hash}}_{{k}}">{{k}}:</label>
-                <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" id="m_{{message.md5hash}}_{{k}}" name="m_{{message.md5hash}}_{{k}}" tabindex="{% increment tab_idx %}">{{msgstr}}</textarea>
+                <label for="m_{{ message.md5hash }}_{{ k }}">{{ k }}:</label>
+                <textarea rows="{{ message.msgid|format_message|lines_count }}" cols="40" id="m_{{ message.md5hash }}_{{ k }}" name="m_{{ message.md5hash }}_{{ k }}" tabindex="{% increment tab_idx %}">{{ msgstr }}</textarea>
                 {% endfor %}
             </td>
             {% else %}
@@ -118,19 +117,19 @@
             </td>
             {% if main_language %}<td class="original">{{ message.main_lang|format_message|linebreaksbr }}</td>{% endif %}
             <td class="translation">
-                <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" name="m_{{message.md5hash}}" tabindex="{% increment tab_idx %}">{{message.msgstr}}</textarea>
+                <textarea rows="{{ message.msgid|format_message|lines_count }}" cols="40" name="m_{{ message.md5hash }}" tabindex="{% increment tab_idx %}">{{ message.msgstr }}</textarea>
                 {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}<a href="#" class="suggest">{% trans "suggest" %}</a>{% endif %}
             </td>
             {% endif %}
             <td class="c">
-                <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
+                <input type="checkbox" name="f_{{ message.md5hash }}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
             </td>
             <td class="location">
                 {% for fn,lineno in message.occurrences %}
-                <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
+                <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{ lineno }}</code>
                 {% endfor %}
                 {% if message.occurrences|length|gt:"3" %}
-                <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
+                <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{ more_count }} more{% plural %}{{ more_count }} more{% endblocktrans %})</a>
                 {% endif %}
             </td>
         </tr>
@@ -140,7 +139,7 @@
 
     <div class="row-fluid">
         <div class="pull-right">
-        {% if query %}<input type="hidden" name="query" value="{{query}}"  />{% endif %}
+        {% if query %}<input type="hidden" name="query" value="{{ query }}"  />{% endif %}
         <input type="submit" class="default btn btn-success" name="_next"
               value="{% trans "Save and translate next block" %}" tabindex="{% increment tab_idx %}"/>
         </div>
@@ -154,7 +153,7 @@
             {% elif i == page %}
                 <li class="active"><span>{{ i }}</span></li>
             {% else %}
-                <li><a href="?page={{i}}{% if query %}&amp;query={{query}}{% endif %}">{{ i }}</a></li>
+                <li><a href="?page={{ i }}{% if query %}&amp;query={{ query }}{% endif %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
         </ul>
@@ -163,7 +162,7 @@
 
         <span class="badge pull-left">
         {% with paginator.object_list|length as hits %}
-        {% blocktrans count rosetta_i18n_pofile|length as message_number %}{{hits}}/{{message_number}} message{% plural %}{{hits}}/{{message_number}} messages{% endblocktrans %}
+        {% blocktrans count rosetta_i18n_pofile|length as message_number %}{{ hits }}/{{ message_number }} message{% plural %}{{ hits }}/{{ message_number }} messages{% endblocktrans %}
         {% endwith %}
         </span>
     </div>

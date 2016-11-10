@@ -1,77 +1,79 @@
 {% extends "rosetta/base.html" %}
 {% load i18n %}
-{% load url from future %}
 
-{% block title %}{{block.super}} - {% trans "Language selection" %}{% endblock %}
+{% block title %}{% trans "Language selection" %}{% endblock %}
 
 {% block breadcumbs %}
-<div><a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo; {% trans "Language selection" %}</div>
-{% if do_session_warn %}<p class="errornote session-warn">{% trans "Couldn't load the specified language file. This usually happens when using the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/>Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in your settings file should fix this." %}</p>{% endif %}
+  <div><a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo; {% trans "Language selection" %}</div>
+  {% if do_session_warn %}<p class="errornote session-warn">{% trans "Couldn't load the specified language file. This usually happens when using the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/>Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in your settings file should fix this." %}</p>{% endif %}
 {% endblock %}
 
 {% block main %}
-<div class="toolbar-content clearfix">
+  <div class="toolbar-content clearfix">
 
     <div class="object-tools pull-right">
-    <a href="?filter=project" class="btn {% ifequal rosetta_i18n_catalog_filter 'project' %}btn-warning{% endifequal %}">
+      <a href="?filter=project" class="btn {% ifequal rosetta_i18n_catalog_filter 'project' %}btn-warning{% endifequal %}">
         {% trans "Project" %}
-    </a>
-    <a href="?filter=third-party" class="btn {% ifequal rosetta_i18n_catalog_filter 'third-party' %}btn-warning{% endifequal %}">
+      </a>
+      <a href="?filter=third-party" class="btn {% ifequal rosetta_i18n_catalog_filter 'third-party' %}btn-warning{% endifequal %}">
         {% trans "Third party" %}
-    </a>
-    <a href="?filter=django" class="btn {% ifequal rosetta_i18n_catalog_filter 'django' %}btn-warning{% endifequal %}">
+      </a>
+      <a href="?filter=django" class="btn {% ifequal rosetta_i18n_catalog_filter 'django' %}btn-warning{% endifequal %}">
         {% trans "Django" %}
-    </a>
-    <a href="?filter=all" class="btn {% ifequal rosetta_i18n_catalog_filter 'all' %}btn-warning{% endifequal %}">
+      </a>
+      <a href="?filter=all" class="btn {% ifequal rosetta_i18n_catalog_filter 'all' %}btn-warning{% endifequal %}">
         {% trans "All" %}
-    </a>
+      </a>
     </div>
 
-</div>
+  </div>
 
-{% if has_pos %}
+  {% if has_pos %}
+
     {% for lid,language,pos in languages %}
-    {% if pos %}
-    <div class="module">
-        <h2 class="switch-lang">{{language}}</h2>
-        <form class="switch-lang" action="/i18n/setlang/" method="post">{% csrf_token %}
-            <input type="hidden" value="{{ lid }}" name="language"/>
-            <input type="submit" value="{% trans "Switch to this language" %}" />
-        </form>
-        <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-            <th>{% trans "Application" %}</th>
-            <th class="r">{% trans "Progress"%}</th>
-            <th class="r">{% trans "Messages" %}</th>
-            <th class="r">{% trans "Translated" %}</th>
-            <th class="r">{% trans "Fuzzy"%}</th>
-            <th class="r">{% trans "Obsolete"%}</th>
-            <th>{% trans "File" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for app,path,po in pos %}
-            <tr class="{% cycle row1,row2 %}">
-            <td><a href="{% url 'rosetta-language-selection' lid forloop.counter0 %}{% if do_django %}?django{% endif %}{% if do_rosetta %}?rosetta{% endif %}">{{ app|title }}</a></td>
-            <td class="ch-progress r">{{po.percent_translated|floatformat:2}}%</td>
-            {% with po.untranslated_entries|length as len_untranslated_entries %}
-            <td class="ch-messages r">{{po.translated_entries|length|add:len_untranslated_entries}}</td>
-            {% endwith %}
-            <td class="ch-translated r">{{po.translated_entries|length}}</td>
-            <td class="ch-fuzzy r">{{po.fuzzy_entries|length}}</td>
-            <td class="ch-obsolete r">{{po.obsolete_entries|length}}</td>
-            <td class="hint">{{ path }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
-    </div>
-    {% endif %}
+      {% if pos %}
+
+        <div class="module">
+          <h2 class="switch-lang">{{ language }}</h2>
+{#          <form class="switch-lang" action="/i18n/setlang/" method="post">{% csrf_token %}#}
+{#            <input type="hidden" value="{{ lid }}" name="language"/>#}
+{#            <input type="submit" value="{% trans "Switch to this language" %}" />#}
+{#          </form>#}
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>{% trans "Application" %}</th>
+                <th class="r">{% trans "Progress"%}</th>
+                <th class="r">{% trans "Messages" %}</th>
+                <th class="r">{% trans "Translated" %}</th>
+                <th class="r">{% trans "Fuzzy"%}</th>
+                <th class="r">{% trans "Obsolete"%}</th>
+                <th>{% trans "File" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for app,path,po in pos %}
+                <tr class="{% cycle 'row1' 'row2' %}">
+                  <td><a href="{% url 'rosetta-language-selection' lid forloop.counter0 %}{% if do_django %}?django{% endif %}{% if do_rosetta %}?rosetta{% endif %}">{{ app|title }}</a></td>
+                  <td class="ch-progress r">{{ po.percent_translated }}%</td>
+                  {% with po.untranslated_entries|length as len_untranslated_entries %}
+                    <td class="ch-messages r">{{ po.translated_entries|length|add:len_untranslated_entries }}</td>
+                  {% endwith %}
+                  <td class="ch-translated r">{{ po.translated_entries|length }}</td>
+                  <td class="ch-fuzzy r">{{ po.fuzzy_entries|length }}</td>
+                  <td class="ch-obsolete r">{{ po.obsolete_entries|length }}</td>
+                  <td class="hint">{{ path }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      {% endif %}
     {% endfor %}
-{% else %}
+  {% else %}
     <h1>{% trans "Nothing to translate!" %}</h1>
     <p>{% trans "You haven't specified any languages in your settings file, or haven't yet generated a batch of translation catalogs." %}</p>
     <p>{% blocktrans with "http://docs.djangoproject.com/en/dev/topics/i18n/#topics-i18n" as i18n_doc_link  %}Please refer to <a href="{{i18n_doc_link}}">Django's I18N documentation</a> for a guide on how to set up internationalization for your project.{% endblocktrans %}</p>
-{% endif %}
+  {% endif %}
 {% endblock %}
